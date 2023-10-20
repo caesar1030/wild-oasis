@@ -12,7 +12,7 @@ export async function getCabins() {
   return data;
 }
 
-export async function deleteCabins(id) {
+export async function deleteCabin(id) {
   const res = await fetch(
     import.meta.env.VITE_BASE_URL + `/cabins?id=eq.${id}`,
     {
@@ -25,12 +25,5 @@ export async function deleteCabins(id) {
 
   if (!res.ok) throw new Error("Failed to delete cabin");
 
-  if (res.headers.get("content-type")?.includes("application/json")) {
-    const data = await res.json();
-    console.log(data, res);
-    return data;
-  }
-
-  console.log("Deleted successfully without JSON response", res);
-  return null; // or return some default value or message
+  return null;
 }
