@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Bookings from "./pages/bookings";
 import AppLayout from "./ui/AppLayout";
 import Cabins from "./pages/Cabins";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +16,9 @@ const App = () => {
     <>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
+
         <GlobalStyles />
+
         <BrowserRouter>
           <Routes>
             <Route element={<AppLayout />}>
@@ -26,6 +29,27 @@ const App = () => {
             </Route>
           </Routes>
         </BrowserRouter>
+
+        <Toaster
+          position="top-center"
+          gutter={12}
+          containerStyle={{ margin: "8px" }}
+          toastOptions={{
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 5000,
+            },
+            style: {
+              fontSize: "12px",
+              maxWidth: "500px",
+              padding: "12px 16px",
+              backgroundColor: "var(--color-grey-0)",
+              color: "var(--color-grey-700)",
+            },
+          }}
+        />
       </QueryClientProvider>
     </>
   );
