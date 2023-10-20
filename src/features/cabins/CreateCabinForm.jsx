@@ -11,7 +11,13 @@ import { createCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
 
 function CreateCabinForm() {
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm();
 
   const queryClient = useQueryClient();
   const { mutate, isPending: isCreating } = useMutation({
@@ -30,35 +36,75 @@ function CreateCabinForm() {
     mutate(data);
   }
 
+  function onError(error) {
+    console.log(error);
+  }
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <FormRow label="Cabin name">
-        <Input type="text" id="name" {...register("name")} />
+    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+      <FormRow label="Cabin name" error={errors.name?.message}>
+        <Input
+          type="text"
+          id="name"
+          {...register("name", {
+            required: "반드시 폼을 입력해주세요",
+          })}
+        />
       </FormRow>
 
-      <FormRow label="Maximum capacity">
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
+      <FormRow label="Maximum capacity" error={errors.maxCapacity?.message}>
+        <Input
+          type="number"
+          id="maxCapacity"
+          {...register("maxCapacity", {
+            required: "반드시 폼을 입력해주세요",
+            min: {
+              value: 1,
+              message: "최소한 1 이상의 숫자를 입력해주세요",
+            },
+          })}
+        />
       </FormRow>
 
-      <FormRow label="Regular price">
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
+      <FormRow label="Regular price" error={errors.regularPrice?.message}>
+        <Input
+          type="number"
+          id="regularPrice"
+          {...register("regularPrice", {
+            required: "반드시 폼을 입력해주세요",
+            min: {
+              value: 1,
+              message: "최소한 1 이상의 숫자를 입력해주세요",
+            },
+          })}
+        />
       </FormRow>
 
-      <FormRow label="Discount">
+      <FormRow label="Discount" error={errors.discount?.message}>
         <Input
           type="number"
           id="discount"
           defaultValue={0}
-          {...register("discount")}
+          {...register("discount", {
+            required: "반드시 폼을 입력해주세요",
+            validate: (val) =>
+              val <= getValues().regularPrice ||
+              "가격보다 작거나 같아야합니다.",
+          })}
         />
       </FormRow>
 
-      <FormRow label="Description for website">
+      <FormRow
+        label="Description for website"
+        error={errors.description?.message}
+      >
         <Textarea
           type="text"
           id="description"
           defaultValue=""
-          {...register("description")}
+          {...register("description", {
+            required: "반드시 폼을 입력해주세요",
+          })}
         />
       </FormRow>
 
