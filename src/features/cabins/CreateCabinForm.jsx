@@ -6,117 +6,135 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCabin } from "../../services/apiCabins";
-import toast from "react-hot-toast";
+import useCreateCabin from "./useCreateCabin";
+import useEditCabin from "./useEditCabin";
 
-function CreateCabinForm() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    getValues,
-    formState: { errors },
-  } = useForm();
+function CreateCabinForm({ cabinToEdit = {} }) {
+  const { createCabin, isCreating } = useCreateCabin();
+  const { editCabin, isEditing } = useEditCabin();
 
-  const queryClient = useQueryClient();
-  const { mutate, isPending: isCreating } = useMutation({
-    mutationFn: (newCabin) => createCabin(newCabin),
-    onSuccess: () => {
-      toast.success("새로운 Cabin이 등록되었습니다.");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
+  const { id: editId, ...editValues } = cabinToEdit;
+  const isEditSession = Boolean(editId);
+
+  const isWorking = isCreating || isEditing;
+  const { register, handleSubmit, reset, getValues, formState } = useForm({
+    defaultValues: isEditSession ? editValues : {},
   });
+  const { errors } = formState;
 
   function onSubmit(data) {
-    mutate(data);
-  }
+    const image = typeof data.image === "string" ? data.image : data.image[0];
 
-  function onError(error) {
-    console.log(error);
+    if (isEditSession)
+      editCabin(
+        { newCabinData: { ...data, image }, id: editId },
+        {
+          onSuccess: (data) => {
+            reset();
+          },
+        },
+      );
+    else
+      createCabin(
+        { ...data, image: image },
+        {
+          onSuccess: (data) => {
+            reset();
+          },
+        },
+      );
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
-      <FormRow label="Cabin name" error={errors.name?.message}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
           id="name"
+          disabled={isWorking}
           {...register("name", {
-            required: "반드시 폼을 입력해주세요",
+            required: "This field is required",
           })}
         />
       </FormRow>
 
-      <FormRow label="Maximum capacity" error={errors.maxCapacity?.message}>
+      <FormRow label="Maximum capacity" error={errors?.maxCapacity?.message}>
         <Input
           type="number"
           id="maxCapacity"
+          disabled={isWorking}
           {...register("maxCapacity", {
-            required: "반드시 폼을 입력해주세요",
+            required: "This field is required",
             min: {
               value: 1,
-              message: "최소한 1 이상의 숫자를 입력해주세요",
+              message: "Capacity should be at least 1",
             },
           })}
         />
       </FormRow>
 
-      <FormRow label="Regular price" error={errors.regularPrice?.message}>
+      <FormRow label="Regular price" error={errors?.regularPrice?.message}>
         <Input
           type="number"
           id="regularPrice"
+          disabled={isWorking}
           {...register("regularPrice", {
-            required: "반드시 폼을 입력해주세요",
+            required: "This field is required",
             min: {
               value: 1,
-              message: "최소한 1 이상의 숫자를 입력해주세요",
+              message: "Capacity should be at least 1",
             },
           })}
         />
       </FormRow>
 
-      <FormRow label="Discount" error={errors.discount?.message}>
+      <FormRow label="Discount" error={errors?.discount?.message}>
         <Input
           type="number"
           id="discount"
+          disabled={isWorking}
           defaultValue={0}
           {...register("discount", {
-            required: "반드시 폼을 입력해주세요",
-            validate: (val) =>
-              val <= getValues().regularPrice ||
-              "가격보다 작거나 같아야합니다.",
+            required: "This field is required",
+            validate: (value) =>
+              value <= getValues().regularPrice ||
+              "Discount should be less than regular price",
           })}
         />
       </FormRow>
 
       <FormRow
         label="Description for website"
-        error={errors.description?.message}
+        error={errors?.description?.message}
       >
         <Textarea
-          type="text"
+          type="number"
           id="description"
           defaultValue=""
+          disabled={isWorking}
           {...register("description", {
-            required: "반드시 폼을 입력해주세요",
+            required: "This field is required",
           })}
         />
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register("image", {
+            required: isEditSession ? false : "This field is required",
+          })}
+        />
       </FormRow>
 
       <FormRow>
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isCreating}>Cabin 추가하기</Button>
+        <Button disabled={isWorking}>
+          {isEditSession ? "Edit cabin" : "Create new cabin"}
+        </Button>
       </FormRow>
     </Form>
   );
