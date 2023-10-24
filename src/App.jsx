@@ -8,6 +8,7 @@ import Bookings from "./pages/bookings";
 import AppLayout from "./ui/AppLayout";
 import Cabins from "./pages/Cabins";
 import { Toaster } from "react-hot-toast";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="bookings" element={<Bookings />} />
               <Route path="cabins" element={<Cabins />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
         </BrowserRouter>

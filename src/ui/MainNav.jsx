@@ -72,6 +72,12 @@ function MainNav() {
             <span>Cabins</span>
           </StyledNavLink>
         </li>
+        <li>
+          <StyledNavLink to="/settings">
+            <HiOutlineHomeModern />
+            <span>Settings</span>
+          </StyledNavLink>
+        </li>
       </NavList>
     </nav>
   );
