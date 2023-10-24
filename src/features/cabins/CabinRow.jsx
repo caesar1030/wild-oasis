@@ -2,12 +2,12 @@ import styled from "styled-components";
 
 import { formatCurrency } from "../../../utils/helpers";
 
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
 import { useDeleteCabin } from "./useDeleteCabin";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
 import useCreateCabin from "./useCreateCabin";
 import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 const TableRow = styled.div`
   display: grid;
@@ -87,9 +87,20 @@ function CabinRow({ cabin }) {
           </Modal.Window>
         </Modal>
 
-        <button onClick={() => mutate(cabinId)} disabled={isPending}>
-          <HiTrash />
-        </button>
+        <Modal>
+          <Modal.Open opens="delete">
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="delete">
+            <ConfirmDelete
+              resourceName="cabins"
+              disabled={isPending}
+              onConfirm={() => mutate(cabinId)}
+            />
+          </Modal.Window>
+        </Modal>
       </div>
     </TableRow>
   );
