@@ -23,7 +23,7 @@ const App = () => {
 
         <GlobalStyles />
 
-        <BrowserRouter>
+        <BrowserRouter basename="wild-oasis">
           <Routes>
             <Route element={<AppLayout />}>
               <Route index element={<Navigate replace to="dashboard" />} />
