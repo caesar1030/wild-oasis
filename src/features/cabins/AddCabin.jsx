@@ -13,15 +13,6 @@ function AddCabin() {
           <CreateCabinForm />
         </Modal.Window>
       </Modal>
-
-      {/* <Modal>
-        <Modal.Open opens="table">
-          <Button>Add new cabin</Button>
-        </Modal.Open>
-        <Modal.Window name="table">
-          <CreateCabinForm />
-        </Modal.Window>
-      </Modal> */}
     </>
   );
 }

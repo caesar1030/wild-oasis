@@ -2,8 +2,10 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import {
   HiOutlineCalendarDays,
+  HiOutlineCog6Tooth,
   HiOutlineHome,
   HiOutlineHomeModern,
+  HiOutlineUsers,
 } from "react-icons/hi2";
 
 const NavList = styled.ul`
@@ -26,6 +28,7 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
+  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -73,8 +76,14 @@ function MainNav() {
           </StyledNavLink>
         </li>
         <li>
+          <StyledNavLink to="/users">
+            <HiOutlineUsers />
+            <span>Users</span>
+          </StyledNavLink>
+        </li>
+        <li>
           <StyledNavLink to="/settings">
-            <HiOutlineHomeModern />
+            <HiOutlineCog6Tooth />
             <span>Settings</span>
           </StyledNavLink>
         </li>
